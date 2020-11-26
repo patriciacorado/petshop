@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+
+<h:messages errorStyle="color:red" warnStyle="color:orange"
+	infoStyle="color:green" globalOnly="false" />
+
+<h:form>
+	<h:commandLink value="voltar"
+		action="consultaproduto.xhtml?faces-redirect=true" />
+</h:form>
+
+<h1 class="text-center wdi-red">Cadastro de Produtos para Pets</h1>
+
+
+
+<h:form>
+	<h:panelGrid columns="2">
+		<h:outputLabel value="Nome" />
+		<h:inputText class="form-control"
+			value="#{produtoController.entity.nome}" />
+
+		<h:outputLabel value="Descrição" />
+		<h:inputText class="form-control"
+			value="#{produtoController.entity.descricao}" />
+
+		<h:outputLabel value="Categoria" />
+		<h:selectOneMenu styleClass="form-control"
+			value="#{produtoController.entity.categoria}">
+			<f:selectItems value="#{produtoController.listaCategoria}" var="obj"
+				itemLabel="#{obj.label}" />
+		</h:selectOneMenu>
+
+		<h:outputLabel value="Preço" />
+		<h:inputText class="form-control"
+			value="#{produtoController.entity.preco}" />
+
+		<h:outputLabel value="Estoque" />
+		<h:inputText class="form-control"
+			value="#{produtoController.entity.estoque}" />
+
+		<h:outputLabel value="Validade" />
+		<h:inputText class="form-control"
+			value="#{produtoController.entity.validade}"
+			converterMessage="Erro ao converter a data">
+				<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+		</h:inputText>
+	</h:panelGrid>
+	
+	<h:commandButton value="Incluir" style="width:100px"
+		class="btn btn-outline-primary"
+		disabled="#{produtoController.entity.id != null}"
+		actionListener="#{produtoController.incluir}" />
+
+	<h:commandButton value="Alterar" style="width:100px"
+		class="btn btn-outline-primary"
+		disabled="#{produtoController.entity.id == null}"
+		actionListener="#{produtoController.alterar}" />
+
+	<h:commandButton value="Excluir" style="width:100px"
+		class="btn btn-outline-danger"
+		disabled="#{produtoController.entity.id == null}"
+		actionListener="#{produtoController.remover}">
+		<f:ajax execute="@this" render="@form formDataTable" />
+	</h:commandButton>
+
+	<h:commandButton value="Limpar" style="width:100px"
+		class="btn btn-outline-primary"
+		actionListener="#{produtoController.limpar}">
+		<f:ajax execute="@this" render="@form" />
+	</h:commandButton>
+	</h:form>
+	<h:form>
+		<h:dataTable value = "#{produtoController.listaEntity}" var="obj">
+		
+		<h:column>
+				<f:facet name="header">Id</f:facet>		
+				<h:outputLabel value="#{obj.id}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Nome</f:facet>		
+				<h:outputLabel value="#{obj.nome}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Descricao</f:facet>		
+				<h:outputLabel value="#{obj.descricao}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Categoria</f:facet>		
+				<h:outputLabel value="#{obj.categoria}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Preço</f:facet>		
+				<h:outputLabel value="#{obj.preco}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Estoque</f:facet>		
+				<h:outputLabel value="#{obj.estoque}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Validade</f:facet>		
+				<h:outputLabel value="#{obj.validade}"/>	
+		</h:column>
+		
+		<h:column>
+				<f:facet name="header">Ação</f:facet>		
+				<h:commandLink value="Editar" actionListener="#{usuarioController.editar(obj)}"/>	
+			</h:column>		
+		</h:dataTable>
+	</h:form>
+</html>
