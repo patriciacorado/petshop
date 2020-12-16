@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+<ui:composition template="template.xhtml">
+	<ui:define name="conteudo">
+
+		<!-- Container -->
+		<div class="container-fluid">
+			<div class="row justify-content-md-center">
+				<div class="col-md-6 col-md-auto login-box">
+					<h:messages errorStyle="color:red" warnStyle="color:orange"
+						infoStyle="color:green" globalOnly="false" />
+
+
+							<h1 style="margin-bottom:50px;" class="text-center wdi-red">Vendas</h1>
+
+					<h:form>
+						<div class="form-row">
+						<h:panelGrid columns="4">
+							<div class="form-group col-md-4" style="margin-top:50px;">
+								<h:selectOneMenu styleClass="form-control"
+									value="#{vendaController.tipoFiltro}">
+									<f:selectItem itemValue="1" itemLabel="Nome" />
+									<f:selectItem itemValue="2" itemLabel="Descrição" />
+								</h:selectOneMenu>
+							</div>
+							<div class="form-group col-md-6" style="margin-top:50px;">
+								<input style = "width:650px;" type="text" class="form-control"
+									placeholder="Informe o filtro ..."
+									jsf:value="#{vendaController.filtro}" />
+							</div>
+						</h:panelGrid>
+						<h:panelGrid columns = "3">
+							<div class="form-group col-md-2" style="margin-top:50px;" >
+								<h:commandButton style="margin-left:220px;" 
+									value="Pesquisar" class="btn btn-primary"
+									actionListener="#{vendaController.pesquisar}" />
+								<h:commandButton value="Cadastrar Produto" 
+									class="btn btn-primary"
+									style="margin-left:50px;"
+									action="cadastroproduto.xhtml?faces-redirect=true" />
+							</div>
+						</h:panelGrid>
+						</div>
+					</h:form>
+					<h:form id="formDataTable">
+						<h:dataTable id="dataTable"
+							class="table table-striped table-hover"
+							value="#{vendaController.listaProduto}" var="obj">
+							<h:column>
+								<f:facet name="header">Nome</f:facet>
+								<h:outputLabel value="#{obj.nome}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Descrição</f:facet>
+								<h:outputLabel value="#{obj.descricao}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Preço</f:facet>
+								<h:outputLabel value="#{obj.preco}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Ação</f:facet>
+								<h:commandButton value="Adicionar ao carrinho"
+									class="btn btn-primary"
+									action="#{vendaController.addCarrinho(obj)}" />
+							</h:column>
+							<h:column>
+								<h:commandButton value="Editar"
+									class="btn btn-primary"
+									action="#{consultaProdutoController.editar(obj)}" />
+							</h:column>
+						</h:dataTable>
+					</h:form>
+				</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>
+</html>

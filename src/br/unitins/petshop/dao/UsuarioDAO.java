@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.unitins.petshop.application.Util;
+import br.unitins.petshop.model.Perfil;
 import br.unitins.petshop.model.Usuario;
 
 public class UsuarioDAO implements DAO<Usuario>{
@@ -17,28 +18,20 @@ public class UsuarioDAO implements DAO<Usuario>{
 	public void inserir(Usuario obj) throws Exception {
 		Exception exception = null;
 		Connection conn = DAO.getConnection();
-
+		
 		StringBuffer sql = new StringBuffer();
 		sql.append("INSERT INTO ");
 		sql.append("usuario ");
-		sql.append("  (nome, cpf, email, senha, data_nascimento) ");
+		sql.append("  ( email, senha, perfil) ");
 		sql.append("VALUES ");
-		sql.append("  (?, ?, ?, ?, ?) ");
+		sql.append("  (?, ?, ?) ");
 		PreparedStatement stat = null;
-
+		
 		try {
 			stat = conn.prepareStatement(sql.toString());
-			stat.setString(1, obj.getNome());
-			stat.setString(2, obj.getCpf());
-			stat.setString(3, obj.getEmail());
-			stat.setString(4, obj.getSenha());
-			
-			// convertendo um obj LocalDate para sql.Date
-			if (obj.getDataNascimento() != null)
-				stat.setDate(5, Date.valueOf(obj.getDataNascimento()));
-			else
-				stat.setDate(5, null);
-
+			stat.setString(1, obj.getEmail());
+			stat.setString(2, Util.hash(obj.getSenha()));
+			stat.setObject(3, (obj.getPerfil() == null ? null : obj.getPerfil().getId()));
 			stat.execute();
 			// efetivando a transacao
 			conn.commit();
@@ -90,6 +83,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 		sql.append("  cpf = ?, ");
 		sql.append("  email = ?, ");
 		sql.append("  senha = ?, ");
+		sql.append("  perfil = ?, ");
 		sql.append("  data_nascimento = ? ");
 		sql.append("WHERE ");
 		sql.append("  id = ? ");
@@ -101,18 +95,18 @@ public class UsuarioDAO implements DAO<Usuario>{
 			stat.setString(1, obj.getNome());
 			stat.setString(2, obj.getCpf());
 			stat.setString(3, obj.getEmail());
-			stat.setString(4, obj.getSenha());
+			stat.setString(4, Util.hash(obj.getSenha()));
+			stat.setObject(5, (obj.getPerfil() == null ? null : obj.getPerfil().getId()));
 			// convertendo um obj LocalDate para sql.Date
-			stat.setDate(5, obj.getDataNascimento() == null ? null : Date.valueOf(obj.getDataNascimento()));
-			stat.setInt(6, obj.getId());
-
+			stat.setDate(6, obj.getDataNascimento() == null ? null : Date.valueOf(obj.getDataNascimento()));
+			stat.setInt(7, obj.getId());
 			stat.execute();
 			// efetivando a transacao
 			conn.commit();
 
 		} catch (SQLException e) {
 
-			System.out.println("Erro ao realizar um comando sql de insert.");
+			System.out.println("Erro ao realizar um comando update.");
 			e.printStackTrace();
 			// cancelando a transacao
 			try {
@@ -121,7 +115,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 				System.out.println("Erro ao realizar o rollback.");
 				e1.printStackTrace();
 			}
-			exception = new Exception("Erro ao inserir");
+			exception = new Exception("Erro ao alterar");
 
 		} finally {
 			try {
@@ -213,6 +207,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
 		sql.append("  u.cpf, ");
+		sql.append("  u.perfil, ");
 		sql.append("  u.email, ");
 		sql.append("  u.senha ");
 		sql.append("FROM  ");
@@ -232,6 +227,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 				Date data = rs.getDate("data_nascimento");
 				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setCpf(rs.getString("cpf"));
 				usuario.setEmail(rs.getString("email"));
 				usuario.setSenha(rs.getString("senha"));
@@ -280,6 +276,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
 		sql.append("  u.cpf, ");
+		sql.append("  u.perfil, ");
 		sql.append("  u.email, ");
 		sql.append("  u.senha ");
 		sql.append("FROM  ");
@@ -301,6 +298,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
 				usuario.setCpf(rs.getString("cpf"));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setEmail(rs.getString("email"));
 				usuario.setSenha(rs.getString("senha"));
 			}
@@ -333,4 +331,140 @@ public class UsuarioDAO implements DAO<Usuario>{
 		return usuario;
 	}
 
+	public Usuario obterUsuario(String email, String senha) throws Exception {
+		Exception exception = null;
+		Connection conn = DAO.getConnection();
+		
+		Usuario usuario = null;
+
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT ");
+		sql.append("  u.id, ");
+		sql.append("  u.data_nascimento, ");
+		sql.append("  u.nome, ");
+		sql.append("  u.cpf, ");
+		sql.append("  u.perfil, ");
+		sql.append("  u.email, ");
+		sql.append("  u.senha ");
+		sql.append("FROM  ");
+		sql.append("  usuario u ");
+		sql.append("WHERE ");
+		sql.append("  u.email = ? ");
+		sql.append("  AND u.senha = ? ");
+
+		PreparedStatement stat = null;
+		try {
+
+			stat = conn.prepareStatement(sql.toString());
+			stat.setString(1, email);
+			stat.setString(2, senha);
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("id"));
+				Date data = rs.getDate("data_nascimento");
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setNome(rs.getString("nome"));
+				usuario.setCpf(rs.getString("cpf"));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
+				usuario.setEmail(rs.getString("email"));
+				usuario.setSenha(rs.getString("senha"));
+			}
+
+		} catch (SQLException e) {
+			Util.addErrorMessage("Não foi possivel buscar os dados do usuario.");
+			e.printStackTrace();
+			exception = new Exception("Erro ao executar um sql em UsuarioDAO.");
+		} finally {
+			try {
+				if (!stat.isClosed())
+					stat.close();
+			} catch (SQLException e) {
+				System.out.println("Erro ao fechar o Statement");
+				e.printStackTrace();
+			}
+
+			try {
+				if (!conn.isClosed())
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("Erro a o fechar a conexao com o banco.");
+				e.printStackTrace();
+			}
+		}
+
+		if (exception != null)
+			throw exception;
+
+		return usuario;
+	}
+	
+	public Usuario obterUmEmail(String email) throws Exception {
+		Exception exception = null;
+		Connection conn = DAO.getConnection();
+		
+		Usuario usuario = null;
+
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT ");
+		sql.append("  u.id, ");
+		sql.append("  u.data_nascimento, ");
+		sql.append("  u.nome, ");
+		sql.append("  u.cpf, ");
+		sql.append("  u.perfil, ");
+		sql.append("  u.email, ");
+		sql.append("  u.senha ");
+		sql.append("FROM  ");
+		sql.append("  usuario u ");
+		sql.append("WHERE u.email = ? ");
+
+		PreparedStatement stat = null;
+		try {
+
+			stat = conn.prepareStatement(sql.toString());
+			stat.setString(1, email);
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("id"));
+				Date data = rs.getDate("data_nascimento");
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setNome(rs.getString("nome"));
+				usuario.setCpf(rs.getString("cpf"));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
+				usuario.setEmail(rs.getString("email"));
+				usuario.setSenha(rs.getString("senha"));
+			}
+
+		} catch (SQLException e) {
+			Util.addErrorMessage("Não foi possivel buscar os dados do usuario.");
+			e.printStackTrace();
+			exception = new Exception("Erro ao executar um sql em UsuarioDAO.");
+		} finally {
+			try {
+				if (!stat.isClosed())
+					stat.close();
+			} catch (SQLException e) {
+				System.out.println("Erro ao fechar o Statement");
+				e.printStackTrace();
+			}
+
+			try {
+				if (!conn.isClosed())
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("Erro a o fechar a conexao com o banco.");
+				e.printStackTrace();
+			}
+		}
+
+		if (exception != null)
+			throw exception;
+
+		return usuario;
+	}
 }

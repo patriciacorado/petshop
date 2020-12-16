@@ -3,6 +3,9 @@ package br.unitins.petshop.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
+
 import br.unitins.petshop.application.Util;
 import br.unitins.petshop.dao.DAO;
 
@@ -19,7 +22,7 @@ public abstract class Controller<T> {
 	public void incluir() {
 		try {
 			dao.inserir(getEntity());
-			Util.addInfoMessage("Inclusão realizada com sucesso.");
+			Util.addInfoMessage("Cadastro realizado com sucesso.");
 			limpar();
 		} catch (Exception e) {
 			Util.addErrorMessage("Não é possivel fazer uma inclusão.");

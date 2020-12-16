@@ -15,14 +15,14 @@ import br.unitins.petshop.model.Produto;
 @ViewScoped
 public class ProdutoController extends Controller<Produto> implements Serializable{
 
+	private static final long serialVersionUID = -7251169322215054717L;
+
 	public ProdutoController() {
 		super(new ProdutoDAO());
 		Flash flash =  FacesContext.getCurrentInstance().getExternalContext().getFlash();
 		flash.keep("produtoFlash");
 		setEntity((Produto)flash.get("produtoFlash"));
 	}
-
-	private static final long serialVersionUID = -9119846944469331050L;
 
 	@Override
 	public Produto getEntity() {

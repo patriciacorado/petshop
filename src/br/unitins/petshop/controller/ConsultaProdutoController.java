@@ -1,4 +1,4 @@
-package br.unitins.petshop.dao;
+package br.unitins.petshop.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import br.unitins.petshop.application.Util;
+import br.unitins.petshop.dao.ProdutoDAO;
 import br.unitins.petshop.model.Produto;
 
 @Named
@@ -24,7 +25,7 @@ public class ConsultaProdutoController implements Serializable{
 	private List<Produto> listaProduto;
 	
 	public void novoProduto() {
-		Util.redirect("produto.xhtml");
+		Util.redirect("cadastroproduto.xhtml");
 	}
 	
 	public void pesquisar() {
@@ -44,12 +45,12 @@ public class ConsultaProdutoController implements Serializable{
 			editarProduto = dao.obterUm(produto);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Util.addErrorMessage("Não foi possível encontrar a midia no banco de dados.");
+			Util.addErrorMessage("Não foi possível encontrar a produto no banco de dados.");
 			return;
 		}
 		
 		Flash flash =  FacesContext.getCurrentInstance().getExternalContext().getFlash();
-		flash.put("midiaFlash", editarProduto);
+		flash.put("produtoFlash", editarProduto);
 		novoProduto();
 	}
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta charset="utf-8" name="viewport"
+		content="width=device-width, initial-scale=1"
+		http-equiv="X-UA-Conpatible" />
+	<h:outputStylesheet library="css" name="bootstrap.css"></h:outputStylesheet>
+	<title>inicial</title>
+</h:head>
+<h:body>
+	<ui:insert name="menu">
+		<h:form
+			style="background-color: blue; margin-top:-25px; padding-bottom:20px;">
+			<h:outputLabel style="margin-left:10px;margin-top:50px; color:violet;"
+				value="Olá #{templateController.usuarioLogado.nome}   " />
+			
+			<h:commandButton class="btn btn-outline-primary"
+				style="margin-left:10px;margin-top:-5px; background:blue; border:none;color:white;"
+				value="(Sair)" action="#{templateController.encerrarSessao}" />
+			<br />
+			<h:commandButton class="btn btn-outline-primary"
+				style="margin-left: 200px; background:blue; border:none;color:white;"
+				value="Perfil" action="#{usuarioController.atualizaPerfil}" />
+			<h:commandButton class="btn btn-outline-primary"
+				style="margin-left: 6px; background:blue; border:none;color:white;"
+				value="Produtos" action="venda.xhtml?faces-redirect=true" />
+			<h:commandButton class="btn btn-outline-primary"
+				style="margin-left: 5px; background:blue; border:none;color:white;"
+				value="Carrinho" action="carrinho.xhtml?faces-redirect=true" />
+			<h:commandButton class="btn btn-outline-primary"
+				style="margin-left: 5px; background:blue; border:none;color:white;"
+				value="Histórico de Venda"
+				action="historico.xhtml?faces-redirect=true" />
+			<h:form>
+				<h:commandButton class="btn btn-outline-primary"
+					style="margin-left: 5px; background:blue; border:none;color:white;"
+					value="Cadastro de Usuário"
+					action="cadastrousuario.xhtml?faces-redirect=true" />
+			</h:form>
+			<br />
+		</h:form>
+		<ui:insert name="conteudo">
+			<div align="center">
+				<h1>PETSHOP</h1>
+			</div>
+		</ui:insert>
+	</ui:insert>
+</h:body>
+</html>
