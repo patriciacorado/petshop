@@ -26,7 +26,10 @@ public class LoginController {
 			else {
 				// Usuario existe com as credenciais
 				Session.getInstance().setAttribute("usuarioLogado", usuarioLogado);
-				Util.redirect("venda.xhtml");
+				if(usuarioLogado.getPerfil().getId()==1)
+					Util.redirect("perfilusuario.xhtml");
+				else 
+					Util.redirect("pesquisaracao.xhtml");
 			}
 				
 		} catch (Exception e) {

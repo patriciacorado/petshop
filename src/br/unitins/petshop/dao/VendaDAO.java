@@ -1,6 +1,7 @@
 package br.unitins.petshop.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import java.util.List;
 
 
 import br.unitins.petshop.model.ItemVenda;
-import br.unitins.petshop.model.Produto;
+import br.unitins.petshop.model.Racao;
 import br.unitins.petshop.model.Usuario;
 import br.unitins.petshop.model.Venda;
 
@@ -150,9 +151,10 @@ public class VendaDAO implements DAO<Venda> {
 				ItemVenda itemVenda = new ItemVenda();
 				itemVenda.setId(rs.getInt("id"));
 				itemVenda.setPreco(rs.getDouble("preco"));
-				ProdutoDAO dao = new ProdutoDAO();
-				itemVenda.setProduto(dao.obterUm(new Produto(rs.getInt("id_produto"))));
-
+				RacaoDAO dao = new RacaoDAO();
+				Racao racao = new Racao();
+				racao.setId(rs.getInt("id_produto"));
+				itemVenda.setProduto(dao.obterUm(racao));
 				listaItemVenda.add(itemVenda);
 			}
 
@@ -233,6 +235,8 @@ public class VendaDAO implements DAO<Venda> {
 			while (rs.next()) {
 				Venda venda = new Venda();
 				venda.setId(rs.getInt("id"));
+				Date data = rs.getDate("data_venda");
+				//venda.setData(data == null ? null : data.toLocalDate());
 				venda.setData(rs.getTimestamp("data_venda").toLocalDateTime());
 				venda.setUsuario(usuario);
 				

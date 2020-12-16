@@ -6,24 +6,61 @@
 <ui:composition template="template.xhtml">
 	<ui:define name="conteudo">
 		<title>perfil de usuario</title>
-
-		<h1 class="text-center wdi-red">Perfil</h1>
-		<div style="margin-left: 250px; margin-right: 530px;margin-top:50px;">
-		<h:messages globalOnly="false" />
+		<div style="text-align: center;">
+			<h1
+				style="margin: 3%; color: #0000FF; font-size: 450%; 
+					font-family: Lucida Handwriting; border-style: outset; border-color: #778899;"
+				class="rounded-3" alt="...">Perfil</h1>
+		</div>
+		<div style="margin: auto; background: #DCDCDC; width: 94%; border-style: double;"
+			class="rounded-3" alt="...">
+			
+			<h:messages style="background: #363636;color:white; border:none; 
+				font-family: Lucida Handwriting;font-size:20px;"
+				styleClass="alert alert-danger hmessages" />
 			<h:form>
-				<h:panelGrid columns="2">
-					<h:outputLabel class="form-label" style="font-size:30px;" value="Nome: " />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="#{usuarioController.entity.nome}" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="CPF:" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="#{usuarioController.entity.cpf}" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="Data de nascimento:" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="#{usuarioController.entity.dataNascimento}" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="Email:" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="#{usuarioController.entity.email}" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="Senha:" />
-					<h:outputLabel class="form-label" style="font-size:30px;" value="#{usuarioController.entity.senha}" />
-					<h:commandButton value="Editar" class="btn btn-primary"
-						action="#{usuarioController.editarPerfil}" />
+				<h:panelGrid columns="1"
+					style="margin:auto;width:60%;text-align:center;
+						font-family: Lucida Handwriting;font-size:30px;"
+					class="form-label">
+					<h:outputLabel value="Nome: "
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.nome}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..." />
+					<h:outputLabel value="CPF:"
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.cpf}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;" />
+					<h:outputLabel value="Data de nascimento:"
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.dataNascimento}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..." />
+					<h:outputLabel value="Sexo:"
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.sexo}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..." />
+					<h:outputLabel value="Email:"
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.email}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..." />
+					<h:outputLabel value="Senha:"
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value="#{perfilController.usuario.senha}"
+						style="border-style:solid;width:100%;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..." />
+					<h:commandButton value="Editar"
+						style="margin-top:3%;margin-bottom:2%;width:50%;font-size:30px;"
+						class="btn btn-outline-dark" action="#{perfilController.editar}" />
 				</h:panelGrid>
 			</h:form>
 		</div>

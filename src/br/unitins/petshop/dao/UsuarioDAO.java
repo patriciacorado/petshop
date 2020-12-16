@@ -10,28 +10,40 @@ import java.util.List;
 
 import br.unitins.petshop.application.Util;
 import br.unitins.petshop.model.Perfil;
+import br.unitins.petshop.model.Sexo;
 import br.unitins.petshop.model.Usuario;
 
-public class UsuarioDAO implements DAO<Usuario>{
+public class UsuarioDAO implements DAO<Usuario> {
 
 	@Override
 	public void inserir(Usuario obj) throws Exception {
 		Exception exception = null;
 		Connection conn = DAO.getConnection();
-		
+
 		StringBuffer sql = new StringBuffer();
 		sql.append("INSERT INTO ");
 		sql.append("usuario ");
-		sql.append("  ( email, senha, perfil) ");
+		sql.append("  (nome, cpf, email, datanascimento, senha, sexo, perfil ) ");
 		sql.append("VALUES ");
-		sql.append("  (?, ?, ?) ");
+		sql.append("  ( ?, ?, ?, ?, ?, ?, ?) ");
 		PreparedStatement stat = null;
-		
+
 		try {
 			stat = conn.prepareStatement(sql.toString());
-			stat.setString(1, obj.getEmail());
-			stat.setString(2, Util.hash(obj.getSenha()));
-			stat.setObject(3, (obj.getPerfil() == null ? null : obj.getPerfil().getId()));
+			stat.setString(1, obj.getNome());
+			stat.setString(2, obj.getCpf());
+			stat.setString(3, obj.getEmail());
+			if (obj.getDataNascimento() != null)
+				stat.setDate(4, Date.valueOf(obj.getDataNascimento()));
+			else
+				stat.setDate(4, null);
+			stat.setString(5, Util.hash(obj.getSenha()));
+			// ternario java
+			stat.setObject(6, (obj.getSexo() == null ? null : obj.getSexo().getId()));
+			stat.setObject(7, 2);
+			// convertendo um obj LocalDate para sql.Date
+			
+
 			stat.execute();
 			// efetivando a transacao
 			conn.commit();
@@ -82,9 +94,10 @@ public class UsuarioDAO implements DAO<Usuario>{
 		sql.append("  nome = ?, ");
 		sql.append("  cpf = ?, ");
 		sql.append("  email = ?, ");
-		sql.append("  senha = ?, ");
-		sql.append("  perfil = ?, ");
-		sql.append("  data_nascimento = ? ");
+		sql.append("  datanascimento = ?, ");
+		sql.append("  senha = ?,"); 
+		sql.append("  sexo = ?, ");
+		sql.append("  perfil = ? ");
 		sql.append("WHERE ");
 		sql.append("  id = ? ");
 
@@ -95,18 +108,20 @@ public class UsuarioDAO implements DAO<Usuario>{
 			stat.setString(1, obj.getNome());
 			stat.setString(2, obj.getCpf());
 			stat.setString(3, obj.getEmail());
-			stat.setString(4, Util.hash(obj.getSenha()));
-			stat.setObject(5, (obj.getPerfil() == null ? null : obj.getPerfil().getId()));
-			// convertendo um obj LocalDate para sql.Date
-			stat.setDate(6, obj.getDataNascimento() == null ? null : Date.valueOf(obj.getDataNascimento()));
-			stat.setInt(7, obj.getId());
+			stat.setDate(4, obj.getDataNascimento() == null ? null : Date.valueOf(obj.getDataNascimento()));
+			stat.setString(5, Util.hash(obj.getSenha()));
+			// ternario java
+			stat.setObject(6, (obj.getSexo() == null ? null : obj.getSexo().getId()));
+			stat.setObject(7, (obj.getPerfil() == null ? null : obj.getPerfil().getId()));
+			stat.setInt(8, obj.getId());
+
 			stat.execute();
 			// efetivando a transacao
 			conn.commit();
 
 		} catch (SQLException e) {
 
-			System.out.println("Erro ao realizar um comando update.");
+			System.out.println("Erro ao realizar um comando sql de insert.");
 			e.printStackTrace();
 			// cancelando a transacao
 			try {
@@ -115,7 +130,7 @@ public class UsuarioDAO implements DAO<Usuario>{
 				System.out.println("Erro ao realizar o rollback.");
 				e1.printStackTrace();
 			}
-			exception = new Exception("Erro ao alterar");
+			exception = new Exception("Erro ao inserir");
 
 		} finally {
 			try {
@@ -138,7 +153,6 @@ public class UsuarioDAO implements DAO<Usuario>{
 		if (exception != null)
 			throw exception;
 
-		
 	}
 
 	@Override
@@ -191,7 +205,6 @@ public class UsuarioDAO implements DAO<Usuario>{
 
 		if (exception != null)
 			throw exception;
-		
 	}
 
 	@Override
@@ -204,12 +217,13 @@ public class UsuarioDAO implements DAO<Usuario>{
 		sql.append("SELECT ");
 //		sql.append("  u.* ");
 		sql.append("  u.id, ");
-		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
-		sql.append("  u.cpf, ");
-		sql.append("  u.perfil, ");
+		sql.append("  u.cpf,");
 		sql.append("  u.email, ");
-		sql.append("  u.senha ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
 		sql.append("FROM  ");
 		sql.append("  usuario u ");
 		sql.append("ORDER BY u.nome ");
@@ -224,14 +238,14 @@ public class UsuarioDAO implements DAO<Usuario>{
 			while (rs.next()) {
 				Usuario usuario = new Usuario();
 				usuario.setId(rs.getInt("id"));
-				Date data = rs.getDate("data_nascimento");
-				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
-				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setCpf(rs.getString("cpf"));
 				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
 				usuario.setSenha(rs.getString("senha"));
-
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				listaUsuario.add(usuario);
 			}
 
@@ -262,45 +276,46 @@ public class UsuarioDAO implements DAO<Usuario>{
 
 		return listaUsuario;
 	}
-
-	@Override
-	public Usuario obterUm(Usuario obj) throws Exception {
+	
+	public List<Usuario> obterTodosNomes(String string) throws Exception {
 		Exception exception = null;
 		Connection conn = DAO.getConnection();
-		
-		Usuario usuario = null;
+		List<Usuario> listaUsuario = new ArrayList<Usuario>();
 
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT ");
+//		sql.append("  u.* ");
 		sql.append("  u.id, ");
-		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
-		sql.append("  u.cpf, ");
-		sql.append("  u.perfil, ");
+		sql.append("  u.cpf,");
 		sql.append("  u.email, ");
-		sql.append("  u.senha ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
 		sql.append("FROM  ");
 		sql.append("  usuario u ");
-		sql.append("WHERE u.id = ? ");
+		sql.append("WHERE u.nome ");
 
 		PreparedStatement stat = null;
 		try {
 
 			stat = conn.prepareStatement(sql.toString());
-			stat.setInt(1, obj.getId());
 
 			ResultSet rs = stat.executeQuery();
-
-			if (rs.next()) {
-				usuario = new Usuario();
+			stat.setString(1, string);
+			while (rs.next()) {
+				Usuario usuario = new Usuario();
 				usuario.setId(rs.getInt("id"));
-				Date data = rs.getDate("data_nascimento");
-				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
 				usuario.setCpf(rs.getString("cpf"));
-				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
 				usuario.setSenha(rs.getString("senha"));
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
+				listaUsuario.add(usuario);
 			}
 
 		} catch (SQLException e) {
@@ -328,10 +343,11 @@ public class UsuarioDAO implements DAO<Usuario>{
 		if (exception != null)
 			throw exception;
 
-		return usuario;
+		return listaUsuario;
 	}
-
-	public Usuario obterUsuario(String email, String senha) throws Exception {
+	
+	@Override
+	public Usuario obterUm(Usuario obj) throws Exception {
 		Exception exception = null;
 		Connection conn = DAO.getConnection();
 		
@@ -340,37 +356,36 @@ public class UsuarioDAO implements DAO<Usuario>{
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT ");
 		sql.append("  u.id, ");
-		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
-		sql.append("  u.cpf, ");
-		sql.append("  u.perfil, ");
+		sql.append("  u.cpf,");
 		sql.append("  u.email, ");
-		sql.append("  u.senha ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
 		sql.append("FROM  ");
 		sql.append("  usuario u ");
-		sql.append("WHERE ");
-		sql.append("  u.email = ? ");
-		sql.append("  AND u.senha = ? ");
+		sql.append("WHERE u.id=? ");
 
 		PreparedStatement stat = null;
 		try {
 
 			stat = conn.prepareStatement(sql.toString());
-			stat.setString(1, email);
-			stat.setString(2, senha);
+			stat.setInt(1, obj.getId());
 
 			ResultSet rs = stat.executeQuery();
 
 			if (rs.next()) {
 				usuario = new Usuario();
 				usuario.setId(rs.getInt("id"));
-				Date data = rs.getDate("data_nascimento");
-				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
 				usuario.setCpf(rs.getString("cpf"));
-				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setSenha(rs.getString("senha"));
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 			}
 
 		} catch (SQLException e) {
@@ -410,15 +425,16 @@ public class UsuarioDAO implements DAO<Usuario>{
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT ");
 		sql.append("  u.id, ");
-		sql.append("  u.data_nascimento, ");
 		sql.append("  u.nome, ");
-		sql.append("  u.cpf, ");
-		sql.append("  u.perfil, ");
+		sql.append("  u.cpf,");
 		sql.append("  u.email, ");
-		sql.append("  u.senha ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
 		sql.append("FROM  ");
 		sql.append("  usuario u ");
-		sql.append("WHERE u.email = ? ");
+		sql.append("WHERE u.email=? ");
 
 		PreparedStatement stat = null;
 		try {
@@ -431,13 +447,14 @@ public class UsuarioDAO implements DAO<Usuario>{
 			if (rs.next()) {
 				usuario = new Usuario();
 				usuario.setId(rs.getInt("id"));
-				Date data = rs.getDate("data_nascimento");
-				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setNome(rs.getString("nome"));
 				usuario.setCpf(rs.getString("cpf"));
-				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
 				usuario.setSenha(rs.getString("senha"));
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
 			}
 
 		} catch (SQLException e) {
@@ -467,4 +484,146 @@ public class UsuarioDAO implements DAO<Usuario>{
 
 		return usuario;
 	}
+	
+	public Usuario obterUmNome(Usuario obj) throws Exception {
+		Exception exception = null;
+		Connection conn = DAO.getConnection();
+		
+		Usuario usuario = null;
+
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT ");
+		sql.append("  u.id, ");
+		sql.append("  u.nome, ");
+		sql.append("  u.cpf,");
+		sql.append("  u.email, ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
+		sql.append("FROM  ");
+		sql.append("  usuario u ");
+		sql.append("WHERE u.nome=? ");
+
+		PreparedStatement stat = null;
+		try {
+
+			stat = conn.prepareStatement(sql.toString());
+			stat.setString(1, obj.getNome());
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("id"));
+				usuario.setNome(rs.getString("nome"));
+				usuario.setCpf(rs.getString("cpf"));
+				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setSenha(rs.getString("senha"));
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
+			}
+
+		} catch (SQLException e) {
+			Util.addErrorMessage("Não foi possivel buscar os dados do usuario.");
+			e.printStackTrace();
+			exception = new Exception("Erro ao executar um sql em UsuarioDAO.");
+		} finally {
+			try {
+				if (!stat.isClosed())
+					stat.close();
+			} catch (SQLException e) {
+				System.out.println("Erro ao fechar o Statement");
+				e.printStackTrace();
+			}
+
+			try {
+				if (!conn.isClosed())
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("Erro a o fechar a conexao com o banco.");
+				e.printStackTrace();
+			}
+		}
+
+		if (exception != null)
+			throw exception;
+
+		return usuario;
+	}
+	
+	public Usuario obterUsuario(String email, String senha) throws Exception {
+		Exception exception = null;
+		Connection conn = DAO.getConnection();
+		
+		Usuario usuario = null;
+
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT ");
+		sql.append("  u.id, ");
+		sql.append("  u.nome, ");
+		sql.append("  u.cpf,");
+		sql.append("  u.email, ");
+		sql.append("  u.datanascimento, ");
+		sql.append("  u.senha, ");
+		sql.append("  u.sexo, ");
+		sql.append("  u.perfil ");
+		sql.append("FROM  ");
+		sql.append("  usuario u ");
+		sql.append("WHERE ");
+		sql.append("  u.email = ? ");
+		sql.append("  AND u.senha = ? ");
+
+		PreparedStatement stat = null;
+		try {
+
+			stat = conn.prepareStatement(sql.toString());
+			stat.setString(1, email);
+			stat.setString(2, senha);
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("id"));
+				usuario.setNome(rs.getString("nome"));
+				usuario.setCpf(rs.getString("cpf"));
+				usuario.setEmail(rs.getString("email"));
+				Date data = rs.getDate("datanascimento");
+				usuario.setSenha(rs.getString("senha"));
+				usuario.setDataNascimento(data == null ? null : data.toLocalDate());
+				usuario.setSexo(Sexo.valueOf(rs.getInt("sexo")));
+				usuario.setPerfil(Perfil.valueOf(rs.getInt("perfil")));
+			}
+
+		} catch (SQLException e) {
+			Util.addErrorMessage("Não foi possivel buscar os dados do usuario.");
+			e.printStackTrace();
+			exception = new Exception("Erro ao executar um sql em UsuarioDAO.");
+		} finally {
+			try {
+				if (!stat.isClosed())
+					stat.close();
+			} catch (SQLException e) {
+				System.out.println("Erro ao fechar o Statement");
+				e.printStackTrace();
+			}
+
+			try {
+				if (!conn.isClosed())
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("Erro a o fechar a conexao com o banco.");
+				e.printStackTrace();
+			}
+		}
+
+		if (exception != null)
+			throw exception;
+
+		return usuario;
+	}
+
 }

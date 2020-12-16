@@ -4,44 +4,64 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 <h:head>
+	<ui:insert name="head">
+		<div style="align: center"></div>
+	</ui:insert>
 	<meta charset="utf-8" name="viewport"
 		content="width=device-width, initial-scale=1"
 		http-equiv="X-UA-Conpatible" />
 	<h:outputStylesheet library="css" name="bootstrap.css"></h:outputStylesheet>
-	<title>inicial</title>
+	<title>Inicio</title>
 </h:head>
-<h:body>
+<h:body style="background:#C0C0C0;">
 	<ui:insert name="menu">
-		<h:form
-			style="background-color: blue; margin-top:-25px; padding-bottom:20px;">
-			<h:outputLabel style="margin-left:10px;margin-top:50px; color:violet;"
-				value="Olá #{templateController.usuarioLogado.nome}   " />
-			
-			<h:commandButton class="btn btn-outline-primary"
-				style="margin-left:10px;margin-top:-5px; background:blue; border:none;color:white;"
-				value="(Sair)" action="#{templateController.encerrarSessao}" />
-			<br />
-			<h:commandButton class="btn btn-outline-primary"
-				style="margin-left: 200px; background:blue; border:none;color:white;"
-				value="Perfil" action="#{usuarioController.atualizaPerfil}" />
-			<h:commandButton class="btn btn-outline-primary"
-				style="margin-left: 6px; background:blue; border:none;color:white;"
-				value="Produtos" action="venda.xhtml?faces-redirect=true" />
-			<h:commandButton class="btn btn-outline-primary"
-				style="margin-left: 5px; background:blue; border:none;color:white;"
-				value="Carrinho" action="carrinho.xhtml?faces-redirect=true" />
-			<h:commandButton class="btn btn-outline-primary"
-				style="margin-left: 5px; background:blue; border:none;color:white;"
-				value="Histórico de Venda"
-				action="historico.xhtml?faces-redirect=true" />
-			<h:form>
-				<h:commandButton class="btn btn-outline-primary"
-					style="margin-left: 5px; background:blue; border:none;color:white;"
-					value="Cadastro de Usuário"
-					action="cadastrousuario.xhtml?faces-redirect=true" />
-			</h:form>
-			<br />
+		<h:form style="background:black;padding-top:3%;padding-bottom:2%;">
+
+			<div >
+				<h:commandButton value="Perfil" 
+					style="margin-left:5%;font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="#{usuarioController.pesquisarUsuario}" />
+
+				<h:commandButton rendered="#{perfilController.usuario.perfil.id == 2}" 
+					value="Produtos"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="pesquisaracao.xhtml?faces-redirect=true" />
+
+				<h:commandButton value="Carrinho" 
+					rendered="#{perfilController.usuario.perfil.id == 2}"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="carrinho.xhtml?faces-redirect=true" />
+
+				<h:commandButton value="Histórico de Compra"
+					rendered="#{perfilController.usuario.perfil.id == 2}"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="historico.xhtml?faces-redirect=true" />
+				<h:commandButton rendered="#{perfilController.usuario.perfil.id == 1}"
+					value="Pesquisar Usuário"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="pesquisarusuario.xhtml?faces-redirect=true" />
+				<h:commandButton rendered="#{perfilController.usuario.perfil.id == 1}"
+					value="Pesquisar Ração"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="pesquisaracao.xhtml?faces-redirect=true" />
+				
+				<h:outputLabel value="Olá #{templateController.usuarioLogado.nome}" 
+					style="margin-left:40%;font-family:Lucida Handwriting;
+						color:#00FF00;font-size:20px;margin-right:2%;"/>
+				<h:commandButton value="(Sair)"
+					style="font-family: Lucida Handwriting;font-size:20px;"
+					class="btn btn-outline-primary"
+					action="#{templateController.encerrarSessao}" />
+			</div>
 		</h:form>
+
+
 		<ui:insert name="conteudo">
 			<div align="center">
 				<h1>PETSHOP</h1>

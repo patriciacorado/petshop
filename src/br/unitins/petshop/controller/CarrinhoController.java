@@ -44,7 +44,7 @@ public class CarrinhoController implements Serializable {
 		listaItemVenda.remove(itemVenda);
 		// atualizando a sessao do carrinho de compras
 		Session.getInstance().setAttribute("carrinho", listaItemVenda);
-		Util.addInfoMessage("O produto: " + item.getProduto().getNome() + " foi removido do carrinho.");
+		//Util.addInfoMessage("O produto: " + item.getProduto().getNome() + " foi removido do carrinho.");
 		System.out.println("em carrinho chegou aqui");
 	}
 

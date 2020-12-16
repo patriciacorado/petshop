@@ -2,37 +2,164 @@
 <html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
-<ui:composition template="template.xhtml">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<ui:composition template="/template.xhtml">
 	<ui:define name="conteudo">
-		<h1 class="text-center wdi-red">Cadastrar Usuário</h1>
-
-		<div style="margin-left: 450px; width: 800px;">
-		<h:messages globalOnly="false" />
-			<h:form>
-				<h:panelGrid style="width:500px;margin-top:50px;" columns="2">
-
-					<h:outputLabel style="font-size:20px;" value="Email: " />
-					<h:inputText class="form-control" style="width:500px;"
-						value="#{usuarioController.cadastro.email}" />
-					<h:outputLabel style="font-size:20px;" value="Senha: " />
-					<h:inputSecret class="form-control" style="width:500px;"
-						value="#{usuarioController.cadastro.senha}" />
-					<h:outputLabel style="font-size:20px;" value="Confirmar senha: " />
-					<h:inputSecret class="form-control" style="width:500px;"
-						value="#{usuarioController.cadastro.confirmarSenha}" />
-
-					<h:selectOneMenu class="btn btn-secondary dropdown-toggle"
-						rendered="#{usuarioController.entity.perfil.id == 1}"
-						value="#{usuarioController.entity.perfil}">
-						<f:selectItems value="#{usuarioController.listaPerfil}" var="obj"
-							itemLabel="#{obj.label}" />
-					</h:selectOneMenu>
+	<title>cadastrodeusuario</title>
+		<div style="text-align: center;">
+			<h1
+				style="margin: 3%; color: #0000FF; font-size: 450%; font-family: Lucida Handwriting; border-style: outset; border-color: #778899;"
+				class="rounded-3" alt="...">Cadastro de Usuário</h1>
+		</div>
+		<div
+			style="margin: auto; background: #D3D3D3; width: 94%; border-style: double;"
+			class="rounded-3" alt="...">
+			<h:form style="margin:auto;width:80%;">
+				<div style="margin:auto;width:100%;tex-align:center;font-family: Lucida Handwriting;font-size:20px;">
+				<h:messages 
+					style="background: #363636;color:white; border:none; 
+					font-family: Lucida Handwriting;font-size:20px;"
+					styleClass="alert alert-danger hmessages"
+					errorStyle="color:red" infoStyle="color:green"
+					warnStyle="color:orange" globalOnly="true" showDetail="false" />
+				</div>
+				<h:panelGrid
+					style="margin:auto;width:80%;text-align:center;
+						font-family: Lucida Handwriting;font-size:30px;"
+					class="form-label" columns="1">
 					<div>
-					<h:commandButton style="margin-left: 200px;" value="Cadastrar" class="btn btn-outline-primary"
-							action="#{usuarioController.cadastrar}" />
+						<h:outputLabel value="Nome:"
+							style="margin-top:2%;font-size:25px;
+								font-weight:bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputText id="itNome"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..."
+								value="#{usuarioController.entity.nome}" required="true"
+								requiredMessage="O nome deve ser informado."
+								validatorMessage="Informe um valor entre 2 e 60">
+								<f:validateLength minimum="2" maximum="60" />
+							</h:inputText>
+							<h:message for="itNome" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Cpf:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputText id="itCpf" value="#{usuarioController.entity.cpf}"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..."
+								validatorMessage="Cpf inválido. Ex. 999.999.999-99">
+								<f:validateRegex
+									pattern="(^[0-9]{3}\.{1}[0-9]{3}\.{1}[0-9]{3}\-{1}[0-9]{2})|([0-9]{11})" />
+							</h:inputText>
+							<h:message for="itCpf" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Data Nascimento:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputText id="itData"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..."
+								value="#{usuarioController.entity.dataNascimento}"
+								converterMessage="Erro ao converter a data">
+								<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+							</h:inputText>
+							<h:message for="itData" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Sexo:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:selectOneMenu value="#{usuarioController.entity.sexo}"
+							style="font-family:Lucida Handwriting;font-size:20px;width:100%;
+								text-align:center;background:#DCDCDC;"
+							class="form-select">
+							<f:selectItem itemLabel="Selecione ..." />
+							<f:selectItems value="#{usuarioController.listaSexo}" var="obj"
+								itemLabel="#{obj.label}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel value="E-mail:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputText id="itEmail"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..."
+								value="#{usuarioController.entity.email}"
+								validatorMessage="Email inválido.">
+								<f:validateRegex
+									pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+							</h:inputText>
+							<h:message for="itEmail" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Senha:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputSecret id="isSenha"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..."
+								value="#{usuarioController.entity.senha}" />
+							<h:message for="isSenha" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Confirmar senha:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:panelGroup>
+							<h:inputSecret id="isConfirmarSenha"
+								style="text-align:center;background:#DCDCDC;
+									border-style:solid;width:100%;border-color:#778899;
+									color:#0000FF;"
+								class="rounded-3" alt="..." value="#{usuarioController.senha}" />
+							<h:message for="isSenha" style="color:red" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Perfil:"
+							style="font-size:25px;font-weight: bold;font-family:Lucida Handwriting;" />
+						<h:selectOneRadio value="#{usuarioController.entity.perfil}"
+							style="margin:auto;font-family:Lucida Handwriting;font-size:25px;">
+							<f:selectItems value="#{usuarioController.listaPerfil}" var="obj"
+								itemLabel="#{obj.label }" />
+						</h:selectOneRadio>
 					</div>
 				</h:panelGrid>
+				<div style="margin-left:23%; width:80%;margin-bottom:4%;margin-top:3%;
+						font-family:Lucida Handwriting;">
+					<h:commandButton value="Incluir"
+						rendered="#{usuarioController.entity.id == null}"
+						actionListener="#{usuarioController.cadastrar}"
+						style="width:30%;font-size:25px;"
+						class="btn btn-outline-dark">
+						<f:ajax execute="@form" render="@form formDataTable" />
+					</h:commandButton>
+					
+					<h:commandButton value="Alterar"
+						rendered="#{usuarioController.entity.id != null}"
+						actionListener="#{usuarioController.alterar}"
+						style="width:30%;font-size:25px;"
+						class="btn btn-outline-dark">
+						<f:ajax execute="@form" render="@form formDataTable" />
+					</h:commandButton>
+
+					<h:commandButton value="Limpar"
+						style="width:30%;font-size:25px;margin-left:10%"
+						class="btn btn-outline-dark"
+						actionListener="#{usuarioController.limpar}">
+						<f:ajax execute="@this" render="@form" />
+					</h:commandButton>
+				</div>
 			</h:form>
 		</div>
 	</ui:define>

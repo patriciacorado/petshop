@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<ui:composition template="template.xhtml">
+	<ui:define name="conteudo">
+
+
+		<div style="text-align: center;">
+			<h1
+				style="margin: 3%; color: #0000FF; font-size: 450%; font-family: Lucida Handwriting; border-style: outset; border-color: #778899;"
+				class="rounded-3" alt="...">Detalhes da Compra</h1>
+		</div>
+
+		<div
+			style="margin: auto; background: #DCDCDC; width:94%; border-style: double;"
+			class="rounded-3" alt="...">
+			<h:messages styleClass="alert alert-danger hmessages" id="messages"
+				style="color:red" globalOnly="false" />
+
+			<h:form>
+						
+				<h:panelGrid style="margin:auto;width:80%;text-align:center;
+								font-family: Lucida Handwriting;font-size:30px;"
+					class="form-label" columns="1">
+				
+					<h:outputLabel value="Cliente: "
+						style="font-weight: bold;margin-top:2%;" />
+					<h:outputLabel value=" #{detalheVendaController.venda.usuario.nome}"
+						style="width:100%;border-style:solid;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="..."/>
+
+					<h:outputLabel value="Data da Venda: " 
+						style="font-weight: bold;margin-top:2%;"/>
+					<h:outputLabel value=" #{detalheVendaController.venda.data}"
+						style="width:100%;border-style:solid;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="...">
+						<f:convertDateTime type="localDate" pattern="dd-MM-yyyy" />
+					</h:outputLabel>
+
+					<h:outputLabel value="Total da venda: " 
+						style="font-weight: bold;margin-top:2%;"/>
+					<h:outputLabel value=" R$#{detalheVendaController.venda.totalVenda}"
+						style="width:100%;border-style:solid;border-color:#778899;
+							color:#0000FF;"
+						class="rounded-3" alt="...">
+					</h:outputLabel>
+				
+					<h:outputLabel value="Itens vendidos: " 
+						style="font-weight: bold;margin-top:2%;"/>
+				</h:panelGrid>
+						
+					<h:dataTable value="#{detalheVendaController.venda.listaItemVenda}"
+						var="obj"
+						class="table table-striped table-hover"
+						style="margin-left:10%;width:80%; 
+						margin-top:3%;font-family:Lucida Handwriting;font-size:20px;">
+						<h:column>
+							<f:facet name="header">Marca</f:facet>
+							<h:outputLabel value="#{obj.produto.marca}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Descrição</f:facet>
+							<h:outputLabel value="#{obj.produto.descricao}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Peso (g)</f:facet>
+							<h:outputLabel value="#{obj.produto.peso}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Validade</f:facet>
+							<h:outputLabel value="#{obj.produto.dataValidade}">
+								<f:convertDateTime type="localDate" pattern="dd-MM-yyyy" />
+							</h:outputLabel>
+						</h:column>
+						<h:column>
+							<f:facet name="header">Faixa etária</f:facet>
+							<h:outputLabel value="#{obj.produto.faixaEtaria}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Valor</f:facet>
+							<h:outputLabel value="R$ #{obj.preco}">
+							</h:outputLabel>
+						</h:column>
+					</h:dataTable>
+
+					<h:commandButton value="Voltar" 
+						style="margin-left:35%;margin-top:3%;margin-bottom:3%;width:30%;font-size:20px;"
+							class="btn btn-outline-dark"
+						onclick="history.go(-1); return false;" />
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>
+
+</html>

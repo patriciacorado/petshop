@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="template.xhtml">
+	<ui:define name="conteudo">
+		<title>Pesquisar Racao</title>
+		<div style="text-align: center;">
+			<h1
+				style="margin: 3%; color: #0000FF; font-size: 450%; font-family: Lucida Handwriting; border-style: outset; border-color: #778899;"
+				class="rounded-3" alt="...">Pesquisar Ração</h1>
+		</div>
+		<div
+			style="margin: auto; background: #DCDCDC; width: 94%; border-style: double;"
+			class="rounded-3" alt="...">
+			<h:messages
+				style="background: #363636;color:white; border:none; 
+				font-family: Lucida Handwriting;font-size:20px;"
+				styleClass="alert alert-danger hmessages" />
+
+			<h:form style="margin-left:10%;width:50%;">
+				<h:commandButton value="Cadastrar Ração"
+					rendered="#{perfilController.usuario.perfil.id == 1}"
+					style="margin-top:3%;margin-bottom:2%;width:30%;font-size:20px;"
+					class="btn btn-outline-dark"
+					action="cadastroracao.xhtml?faces-redirect=true" />
+			</h:form>
+			<h:form
+				style="margin:auto;font-family:Lucida Handwriting;
+					font-size:20px;margin-bottom:3%;margin-top:2%;">
+
+				<h:panelGrid style="width:100%;" columns="3">
+
+					<h:outputText value="Insira a marca da ração:"
+						style="margin-left:30%;width:40%;" />
+					<h:inputText value="#{consultaProdutoController.marca}"
+						style="margin-left:-25%;width:117%;border-color:#778899;
+							color:#0000FF" />
+
+					<h:commandButton value="Pesquisar"
+						style="width:40%;font-size:20px;margin-left:-7%;"
+						class="btn btn-outline-dark"
+						action="#{consultaProdutoController.pesquisar()}" />
+				</h:panelGrid>
+			</h:form>
+			<h:form id="formDataTable"
+				style="width:80%; font-family: Lucida Handwriting;font-size:20px;">
+				<ui:repeat id="dataTable" class="table table-striped table-hover"
+					value="#{consultaProdutoController.listaProduto}" var="obj">
+					<div>
+						<h:panelGrid style="margin-bottom:10%;" columns="2">
+							<h:graphicImage style="width:30%;margin-left:20%;" url="#{obj.foto}"></h:graphicImage>
+
+							<h:panelGroup >
+								<h:outputLabel value="#{obj.marca}" />
+								<br />
+								<h:outputLabel value="#{obj.descricao}" />
+								<br />
+								<h:outputLabel value="#{obj.peso}" />
+								<br />
+								<h:outputLabel value="#{obj.preco}" />
+								<br />
+								<h:outputLabel value="#{obj.dataValidade}">
+									<f:convertDateTime type="localDate" pattern="dd-MM-yyyy" />
+								</h:outputLabel>
+								<br />
+								<h:outputLabel value="#{obj.faixaEtaria}" />
+								<br />
+								<h:outputLabel value="#{obj.animal.categoria}" />
+								<br />
+								<h:outputLabel value="#{obj.animal.raca}" />
+								<br />
+								<h:outputLabel value="#{obj.estoque}" />
+								<br />
+								<h:commandLink
+									rendered="#{perfilController.usuario.perfil.id == 2}"
+									value="Adicionar ao carrinho"
+									action="#{vendaController.addCarrinho(obj)}" />
+								<h:commandLink value="Editar"
+									rendered="#{perfilController.usuario.perfil.id == 1}"
+									action="#{consultaProdutoController.editar(obj)}" />
+							</h:panelGroup>
+							</h:panelGrid>
+					</div>
+				</ui:repeat>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

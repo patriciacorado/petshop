@@ -4,7 +4,7 @@
   <artifactId>Petshop</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <dependencies>
+ <dependencies>
   
   		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.faces -->
 		<dependency>
@@ -45,9 +45,9 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.13</version>
-		</dependency>	
-		
-		<!-- Bibliotecas para utilizar com o flashscope -->
+		</dependency>					
+  		
+  		<!-- Bibliotecas para utilizar com o flashscope -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -67,8 +67,8 @@
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
 			<version>1.1.1</version>
-		</dependency>					
-  
+		</dependency>	
+  		
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

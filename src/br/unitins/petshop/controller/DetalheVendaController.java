@@ -7,6 +7,7 @@ import javax.faces.context.Flash;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import br.unitins.petshop.dao.VendaDAO;
 import br.unitins.petshop.model.Venda;
 
 @Named
@@ -21,6 +22,16 @@ public class DetalheVendaController implements Serializable {
 		Flash flash =  FacesContext.getCurrentInstance().getExternalContext().getFlash();
 		flash.keep("detalheFlash");
 		setVenda((Venda)flash.get("detalheFlash"));
+		
+		VendaDAO dao = new VendaDAO();
+		try {
+			dao.obterTodos(this.getVenda().getUsuario());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	public Venda getVenda() {

@@ -1,16 +1,14 @@
 package br.unitins.petshop.model;
 
-public enum Categoria {
-
-	CACHORRO(1,"Cachorro"),
-	GATO(2,"Gato"),
-	PASSARO(3, "Pássaro"),
-	PEIXE(4,"Peixe");
+public enum FaixaEtaria {
+	FILHOTE(1,"Filhote"),
+	ADULTO(2,"Adulto"),
+	IDOSO(3, "Idoso");
 	
 	private String label;
 	private int id;
 	
-	Categoria(int id, String label) {
+	FaixaEtaria(int id, String label) {
 		this.id = id;
 		this.label = label;
 	}
@@ -28,8 +26,8 @@ public enum Categoria {
 		this.id = id;
 	}
 	
-	public static Categoria valueOf(int id) {
-		for (Categoria tipo : values()) {
+	public static 	FaixaEtaria valueOf(int id) {
+		for (FaixaEtaria tipo : values()) {
 			if (id == tipo.getId())
 				return tipo;
 		}

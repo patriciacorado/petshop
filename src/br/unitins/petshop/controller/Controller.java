@@ -12,7 +12,7 @@ import br.unitins.petshop.dao.DAO;
 public abstract class Controller<T> {
 	protected T entity;
 	private DAO<T> dao = null;
-	private List<T> listaEntity;
+	protected List<T> listaEntity;
 	
 	public Controller(DAO<T> dao) {
 		super();
